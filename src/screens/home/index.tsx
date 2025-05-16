@@ -11,30 +11,32 @@ import Participant from "../../components/Participant";
 import { styles } from "./styles";
 
 export default function Home() {
-  const [participants, setParticipants] = useState([
-    "Fernando",
-    "Lucas",
-    "João",
-    "Rodolfo",
-    "Marcos",
-    "Ricardo",
-    "Biro",
-    "Biro 1",
-    "Biro 2",
-    "Biro 3",
-    "Biro 4",
-    "Biro 5",
-    "Biro 6",
-  ]);
+  // string[] serve para informar que o valor é um array de string
+  // Mas só precisa ser usado quando o valor incial é indefinido (vazio)
+  const [participants, setParticipants] = useState<string[]>([]);
+
+  const [newParticipant, setNewParticipant] = useState("");
 
   function handleParticipantAdd() {
-    if (participants.includes("Fernando")) {
+    // Verifica se o participante já existe na lista
+    if (participants.includes(newParticipant)) {
       return Alert.alert(
-        "Participante Existe",
-        "Já existe um participante na lista"
+        "Participante Existe!",
+        "Já existe um participante na lista."
       );
     }
-    console.log("Você clicou no botão de adicionar participante");
+
+    // Verifica se o campo está vazio
+    if (newParticipant === "") {
+      return Alert.alert(
+        "Campo vazio!",
+        "Por favor, preencha o campo com o nome do participante."
+      );
+    }
+
+    setParticipants((prevState) => [...prevState, newParticipant]);
+    setNewParticipant("");
+
     return;
   }
 
@@ -43,9 +45,10 @@ export default function Home() {
       {
         text: "Sim",
         onPress: () => {
-          participants.splice(participants.indexOf(name), 1);
-          setParticipants([...participants]);
-          Alert.alert("Removido!");
+          setParticipants((prevState) =>
+            prevState.filter((participant) => participant !== name)
+          );
+          //Alert.alert("Removido!");
         },
       },
       {
@@ -68,6 +71,8 @@ export default function Home() {
           style={styles.input}
           placeholder="Nome do participante"
           placeholderTextColor="#6B6B6B"
+          onChangeText={setNewParticipant}
+          value={newParticipant}
         />
 
         <TouchableOpacity style={styles.button} onPress={handleParticipantAdd}>
